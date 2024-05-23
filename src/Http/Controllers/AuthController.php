@@ -40,9 +40,9 @@ class AuthController extends Controller
     }
 
     public function logout(Request $request)
-    {
+    {        
         auth()->logout();
-        // auth('jwt')->logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

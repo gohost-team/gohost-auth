@@ -35,9 +35,10 @@ class UserFromCookie
         return $next($request);
     }
 
-    private function createUserIfNeed($userPayload) 
+    private function createUserIfNeed($payload) 
     {
-        $user = User::where('email', $payload['email'])->first();
+        $model = config('gh-auth.user_model');
+        $user = $model::where('email', $payload['email'])->first();
         if (config('gh-auth.auto_create_account')) {
             User::updateOrCreate([
                 'email' => $payload['email'],

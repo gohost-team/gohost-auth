@@ -29,6 +29,7 @@ Add the service provider to the providers array in the config/app.php config fil
     ...
 
     GohostAuth\Providers\AuthServiceProvider::class,
+    Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
 ]
 ```
 
@@ -36,6 +37,18 @@ Add the service provider to the providers array in the config/app.php config fil
 
 ```
 php artisan vendor:publish --provider="GohostAuth\Providers\AuthServiceProvider"
+
+php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
 ```
 
-### Usage
+### Update User model
+
+Add buildPermissions method
+
+```
+static public function buildPermissions()
+{
+    return [];
+}
+```
+
