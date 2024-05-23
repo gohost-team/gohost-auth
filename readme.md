@@ -41,14 +41,57 @@ php artisan vendor:publish --provider="GohostAuth\Providers\AuthServiceProvider"
 php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
 ```
 
+### Update database table
+
+```
+Schema::create('users', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->string('email')->unique();
+    $table->string('password');
+    $table->rememberToken();
+    $table->timestamps();
+
+    $table->string('gh_id')->unique();
+    $table->boolean('is_active')->default(false);
+    $table->string('type');
+    $table->json('permissions')->nullable();    
+});
+```
+
+
 ### Update User model
 
 Add buildPermissions method
 
 ```
-static public function buildPermissions()
-{
-    return [];
+use GohostAuth\Models\User as BaseUser;
+use GohostAuth\Models\Contracts\HasPermissions;
+
+class User extends BaseUser implements HasPermissions {
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'type',
+        'is_active',        
+        'permissions'
+    ];
+
+    ....
+
+    static public function buildPermissions()
+    {
+        return [];
+    }
 }
 ```
 
+### Usage
+
+Add midleware to authenticate logged user
+
+```
+GohostAuth\Http\Middleware\UserFromCookie::class
+```

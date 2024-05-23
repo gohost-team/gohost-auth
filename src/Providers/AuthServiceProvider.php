@@ -15,5 +15,8 @@ class AuthServiceProvider extends ServiceProvider
         $path = realpath(__DIR__.'/../../config/gh-auth.php');
         $this->publishes([$path => config_path('gh-auth.php')], 'config');
         $this->mergeConfigFrom($path, 'gh-auth');
+
+        $file = __DIR__.'/../url.php';
+        require_once $file;
     }
 }
