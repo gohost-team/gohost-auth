@@ -38,11 +38,24 @@ class UserFromCookie
     private function createUserIfNeed($payload) 
     {
         $model = config('gh-auth.user_model');
-        $user = $model::where('email', $payload['email'])->first();
+
+        $user = null;
+        $uniqueField = "gh_id";
+        if (array_key_exists("gh_id", $payload)) {
+            $user = $model::where('gh_id', $payload['gh_id'])->first();
+            if (!$user) {
+                $uniqueField = "email";
+                $user = $model::where('email', $payload['email'])->first();
+            }
+        }        
+
         if (config('gh-auth.auto_create_account')) {
-            User::updateOrCreate([
-                'email' => $payload['email'],
+            $user = User::updateOrCreate([
+                $uniqueField => $payload[$uniqueField],
             ],[
+                'gh_id' => $payload['gh_id'],
+                'email' => $payload['email'],
+                'is_active' => $payload['is_active'],
                 'name' => $payload['name'],
                 'type' => $payload['type'],
                 'permissions' => $payload['permissions'],
