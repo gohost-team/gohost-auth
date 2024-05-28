@@ -16,7 +16,7 @@ Update composer.json file
 Install
 
 ```
-composer require gohost/auth:dev-v1.0
+composer require gohost/auth:v0.2
 ```
 
 ### Add service provider
