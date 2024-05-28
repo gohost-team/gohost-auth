@@ -26,7 +26,7 @@ class UserFromCookie
         JWTAuth::setToken($token);
         $userPayload = JWTAuth::getPayload();
 
-        $user = $this->createUserIfNeed($userPayload);
+        $user = $this->createUserIfNeed($userPayload->toArray());
         if ($user) {
             $this->autoLogin($user);
         }
