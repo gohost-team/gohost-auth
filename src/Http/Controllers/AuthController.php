@@ -54,6 +54,63 @@ class AuthController extends Controller
         return redirect()->route('home')->withCookie($cookie);
     }
 
+    public function resetPassword(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+        ]);
+        $email = $request->input('email');
+
+        $model = config('gh-auth.user_model');
+        $user = $model::where('email', $email)->first();
+        if ($user) {
+            $user->sendResetPasswordEmail();
+        }
+
+        return redirect()->route('auth.token-sent');
+    }
+
+    public function newPassword(Request $request)
+    {
+        $token = $request->input('token');
+        if (!$token) {
+            return view('gohost-auth::auth.not-found');
+        }
+
+        $model = config('gh-auth.user_model');
+        $user = $model::where('active_token', $token)->first();
+
+        if (! $user || ! $user->canActivable()) {
+            return view('gohost-auth::auth.not-found');
+        }
+
+        return view('gohost-auth::auth.new-password', ['token' => $token]);
+    }
+
+    public function updatePassword(Request $request)
+    {        
+        $token = $request->input('token');
+        if (!$token) {
+            return view('gohost-auth::auth.not-found');
+        }
+
+        $model = config('gh-auth.user_model');
+        $user = $model::where('active_token', $token)->first();
+
+        if (! $user || ! $user->canActivable()) {
+            return view('gohost-auth::auth.not-found');
+        }
+
+        $request->validate([
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required|min:6|same:password',
+        ]);
+
+        $user->activeAccount($request->input('password'));
+
+        return redirect()->route('login');
+    }
+
     protected function authJWTToken()
     {
         $user = Auth::user();

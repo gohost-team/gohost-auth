@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
-use GohostAuth\Models\User;
 
 class UserFromCookie
 {
@@ -50,7 +49,7 @@ class UserFromCookie
         }        
 
         if (config('gh-auth.auto_create_account')) {
-            $user = User::updateOrCreate([
+            $user = $model::updateOrCreate([
                 $uniqueField => $payload[$uniqueField],
             ],[
                 'gh_id' => $payload['gh_id'],
