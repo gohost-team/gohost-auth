@@ -14,7 +14,7 @@
     <link href="https://fonts.bunny.net/css?family=ibm-plex-sans:200,300,400,500,600,700,800,900,200i,300i,400i" rel="stylesheet" />
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css','resources/js/app.js','resources/scss/app.scss'])    
+    @vite(['resources/css/app.css','resources/js/app.js'])
   </head>
   <body>
     {{ $slot }}

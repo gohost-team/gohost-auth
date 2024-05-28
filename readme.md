@@ -56,9 +56,26 @@ Schema::create('users', function (Blueprint $table) {
     $table->boolean('is_active')->default(false);
     $table->string('type');
     $table->json('permissions')->nullable();    
+
+    $table->string('status', 10)->index();
+    $table->string('active_token', 64)->nullable()->index();
 });
 ```
 
+### Updte config/auth.php file
+
+```
+'guards' => [
+        'web' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
+        'platform' => [
+            'driver' => 'jwt',
+            'provider' => 'users',
+        ],
+    ],
+```
 
 ### Update User model
 

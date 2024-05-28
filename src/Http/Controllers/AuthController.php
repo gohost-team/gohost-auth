@@ -15,7 +15,7 @@ class AuthController extends Controller
     {
         $user = Auth::user();
         if ($user) {
-            return redirect()->route('home');
+            return redirect(home_url());
         }
 
         return view('gohost-auth::auth.login');
@@ -31,7 +31,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
             $cookie = $this->authJWTToken();
 
-            return redirect()->route('home')->withCookie($cookie);
+            return redirect(home_url())->withCookie($cookie);
         }
  
         return back()->withErrors([
@@ -51,7 +51,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Successfully logged out'])->withCookie($cookie);
         }
         
-        return redirect()->route('home')->withCookie($cookie);
+        return redirect(home_url())->withCookie($cookie);
     }
 
     public function resetPassword(Request $request)
