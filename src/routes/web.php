@@ -25,4 +25,12 @@ if (config('gh-auth.register_auth_router'))
         Route::get('new-password', [AuthController::class, 'newPassword'])->name('auth.new-password');
         Route::post('new-password', [AuthController::class, 'updatePassword'])->name('auth.update-password');
     });
+} else {
+    Route::get('login', function (){
+        return redirect(login_url());
+    })->name('login');
+
+    Route::match(['GET', 'POST'], 'logout', function (){
+        return redirect(logout_url());
+    })->name('logout');
 }
