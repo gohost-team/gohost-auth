@@ -1,4 +1,4 @@
-<x-layouts.email :title="$title">
+<x-gohost-auth::layout.email :title="$title">
   <mj-section padding="40px 0px 40px 0px">
     <mj-column width="100%">
       <mj-text font-size="30px" line-height="1.3">
@@ -15,4 +15,4 @@
        </mj-button>
     </mj-column>
   </mj-section>
-</x-layouts.email>
+</x-gohost-auth::layout.email>
