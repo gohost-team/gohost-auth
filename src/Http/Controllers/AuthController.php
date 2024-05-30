@@ -108,7 +108,7 @@ class AuthController extends Controller
 
         $user->activeAccount($request->input('password'));
 
-        return redirect()->route('login');
+        return redirect(login_url());
     }
 
     protected function authJWTToken()
