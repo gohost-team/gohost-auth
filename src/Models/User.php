@@ -161,19 +161,26 @@ class User extends Authenticatable implements JWTSubject
         return $this->type == UserType::Customer;
     }    
 
+
+    public function getAuthIdentifierName()
+    {
+        return "gh_id";
+    }
+
     // =========================================================
     // JWT Token
     // =========================================================
 
     public function getJWTIdentifier()
     {
-        return $this->getKey();
+        return $this->gh_id;
     }
 
     public function getJWTCustomClaims()
     {
         $model = config('gh-auth.user_model');
         return [
+            // 'sub' => $this->gh_id,
             'name' => $this->name,
             'email' => $this->email,
             'type' => $this->type,

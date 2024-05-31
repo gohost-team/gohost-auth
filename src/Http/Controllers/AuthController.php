@@ -11,9 +11,14 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:gh_token', ['only' => ['logout']]);
+    }
+
     public function login(Request $request)
     {
-        $user = Auth::user();
+        $user = Auth::guard('gh_token')->user();
         if ($user) {
             return redirect(home_url());
         }
@@ -27,9 +32,13 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-        if (auth()->attempt($credentials)) {
-            $request->session()->regenerate();
-            $cookie = $this->authJWTToken();
+
+        if (auth('web')->attempt($credentials)){
+            $user = auth('web')->user();
+
+            $token = auth('gh_token')->login($user);
+            $expire = time() + env('JWT_TTL', 60) * 60;
+            $cookie = cookie(config('gh-auth.token_key'), $token, $expire);
 
             return redirect(home_url())->withCookie($cookie);
         }
@@ -41,10 +50,8 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {        
-        auth()->logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        auth('gh_token')->logout();
+        auth('web')->logout();
 
         $cookie = Cookie::forget(config('gh-auth.token_key'));
         if ($request->expectsJson()) {
@@ -109,15 +116,5 @@ class AuthController extends Controller
         $user->activeAccount($request->input('password'));
 
         return redirect(login_url());
-    }
-
-    protected function authJWTToken()
-    {
-        $user = Auth::user();
-
-        $token = auth('platform')->login($user);
-        $expire = time() + env('JWT_TTL', 60) * 60;
-
-        return cookie(config('gh-auth.token_key'), $token, $expire);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 return [
-	'token_key' => env('AUTH_TOKEN_KEY', 'auth_token'),
+	'token_key' => 'token', // Don't change this key, it used by jwt
 	'auto_create_account' => env('AUTH_AUTO_CREATE_ACCOUNT', false),
 	'register_auth_router' => env('AUTH_ENABLE_AUTH_ROUTER', false),
 	'base_url' => env('AUTH_BASE_URL', 'http://localhost:8080'),	

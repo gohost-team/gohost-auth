@@ -13,22 +13,14 @@ class UserFromCookie
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $user = Auth::user();
-        if ($user) {
-            return $next($request);    
-        }
-
-        $token = $request->cookie(config('gh-auth.token_key'));
-        if (!$token) {
-            return $next($request);
-        }
+        $parser = app('tymon.jwt.parser');
+        $parser->setRequest($request);
+        $token = $parser->parseToken();
 
         JWTAuth::setToken($token);
         $userPayload = JWTAuth::getPayload();
-
-        $user = $this->createUserIfNeed($userPayload->toArray());
-        if ($user) {
-            $this->autoLogin($user);
+        if($userPayload) {
+            $this->createUserIfNeed($userPayload->toArray());
         }
 
         return $next($request);
@@ -48,7 +40,10 @@ class UserFromCookie
             }
         }        
 
+        \Log::debug('UserFromCookie: check auto_create account');
         if (config('gh-auth.auto_create_account')) {
+            \Log::debug('UserFromCookie: update or create user');
+
             $user = $model::updateOrCreate([
                 $uniqueField => $payload[$uniqueField],
             ],[
@@ -62,10 +57,5 @@ class UserFromCookie
         }
 
         return $user;
-    }
-
-    private function autoLogin($user)
-    {
-        Auth::login($user);
     }
 }

@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\Mail;
 
 if (config('gh-auth.register_auth_router')) 
 {
-    Route::middleware(['web'])->group(function () 
-    {
+    Route::group(['middleware' => ['web']], function () {
         Route::get('login', [AuthController::class, 'login'])->name('login');
         Route::post('login', [AuthController::class, 'authenticate'])->name('auth.authenticate');
+
         Route::match(['GET', 'POST'], '/logout', [AuthController::class, 'logout'])->name('logout');
 
         Route::get('reset-password', function() {
@@ -25,12 +25,13 @@ if (config('gh-auth.register_auth_router'))
         Route::get('new-password', [AuthController::class, 'newPassword'])->name('auth.new-password');
         Route::post('new-password', [AuthController::class, 'updatePassword'])->name('auth.update-password');
     });
-} else {
+} else 
+{
     Route::get('login', function (){
         return redirect(login_url());
     })->name('login');
 
     Route::match(['GET', 'POST'], 'logout', function (){
-        return redirect(logout_url());
+            return redirect(logout_url());
     })->name('logout');
 }

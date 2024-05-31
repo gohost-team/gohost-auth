@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Livewire;
 use GohostAuth\Livewire\ResetPassword;
+use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\JWTGuard;
 
 class AuthServiceProvider extends ServiceProvider
 {
