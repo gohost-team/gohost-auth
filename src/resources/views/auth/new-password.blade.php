@@ -12,7 +12,7 @@
       </div>
       
       <div>
-        <form class="grid grid-cols-1 gap-4" method="post" action="{{route('auth.update-password', ['token' => $token])}}">
+        <form class="grid grid-cols-1 gap-4" method="post" action="{{route('auth.update_password', ['token' => $token])}}">
           
           @csrf
           @if ($errors->any())

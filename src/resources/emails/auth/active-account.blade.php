@@ -15,4 +15,4 @@
        </mj-button>
     </mj-column>
   </mj-section>
-<x-gohost-auth::layout.email>
+</x-gohost-auth::layout.email>

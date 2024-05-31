@@ -22,8 +22,8 @@ if (config('gh-auth.register_auth_router'))
             return view("gohost-auth::auth.token-sent");
         })->name('auth.token_sent');
 
-        Route::get('new-password', [AuthController::class, 'newPassword'])->name('auth.new-password');
-        Route::post('new-password', [AuthController::class, 'updatePassword'])->name('auth.update-password');
+        Route::get('new-password', [AuthController::class, 'newPassword'])->name('auth.new_password');
+        Route::post('new-password', [AuthController::class, 'updatePassword'])->name('auth.update_password');
     });
 } else 
 {

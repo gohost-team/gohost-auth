@@ -83,7 +83,8 @@ class User extends Authenticatable implements JWTSubject
 
     public function sendInvitation()
     {
-        if ($this->type == UserType::GoHost) {
+        if ($this->type == UserType::GoHost 
+            && config('gh-auth.auto_create_account') ) {
             Mail::to($this->email)->queue(new ActiveAccount($this));
         }
     }
