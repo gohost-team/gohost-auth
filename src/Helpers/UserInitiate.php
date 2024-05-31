@@ -1,32 +1,30 @@
 <?php
 
-namespace GohostAuth\Http\Middleware;
+namespace GohostAuth\Helpers;
 
-use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
 
-class UserFromCookie
+class UserInitiate
 {
-    public function handle(Request $request, Closure $next): Response
+    public static function handle(Request $request)
     {
         $parser = app('tymon.jwt.parser');
-        $parser->setRequest($request);
+        $parser->setRequest($request); 
         $token = $parser->parseToken();
 
         JWTAuth::setToken($token);
         $userPayload = JWTAuth::getPayload();
+
         if($userPayload) {
-            $this->createUserIfNeed($userPayload->toArray());
+            return self::createUserIfNeed($userPayload->toArray());
         }
 
-        return $next($request);
+        return null;
     }
 
-    private function createUserIfNeed($payload) 
+    private static function createUserIfNeed($payload) 
     {
         $model = config('gh-auth.user_model');
 
@@ -38,12 +36,9 @@ class UserFromCookie
                 $uniqueField = "email";
                 $user = $model::where('email', $payload['email'])->first();
             }
-        }        
+        }
 
-        \Log::debug('UserFromCookie: check auto_create account');
-        if (config('gh-auth.auto_create_account')) {
-            \Log::debug('UserFromCookie: update or create user');
-
+        if (config('gh-auth.auto_create_account')) {            
             $user = $model::updateOrCreate([
                 $uniqueField => $payload[$uniqueField],
             ],[
