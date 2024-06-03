@@ -74,7 +74,7 @@ class AuthController extends Controller
             $user->sendResetPasswordEmail();
         }
 
-        return redirect()->route('auth.token-sent');
+        return redirect()->route('auth.token_sent');
     }
 
     public function newPassword(Request $request)
