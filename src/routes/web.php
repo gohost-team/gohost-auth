@@ -31,6 +31,10 @@ if (config('gh-auth.register_auth_router'))
         return redirect(login_url());
     })->name('login');
 
+    Route::get('new-password', function (){
+        return redirect(config('gh-auth.base_url')."/new-password");
+    })->name('auth.new_password');    
+
     Route::match(['GET', 'POST'], 'logout', function (){
             return redirect(logout_url());
     })->name('logout');
