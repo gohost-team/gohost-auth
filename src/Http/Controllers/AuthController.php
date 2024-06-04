@@ -2,18 +2,39 @@
 
 namespace GohostAuth\Http\Controllers;
 
-use GohostAuth\Enums\UserType;
-use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth:gh_token', ['only' => ['logout']]);
+    }
+
+    public function authenticate(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (auth('web')->attempt($credentials)) {
+            $user = auth('web')->user();
+
+            $token = auth('gh_token')->login($user);
+            $expire = time() + env('JWT_TTL', 60) * 60;
+            $domain = config('gh-auth.cookie_domain');
+            $cookie = cookie(config('gh-auth.token_key'), $token, $expire, null, $domain);
+
+            return redirect(home_url())->withCookie($cookie);
+        }
+
+        return back()->withErrors([
+            'error' => 'Thông tin đăng nhập không chính xác.',
+        ])->onlyInput('email');
     }
 
     public function login(Request $request)
@@ -26,30 +47,8 @@ class AuthController extends Controller
         return view('gohost-auth::auth.login');
     }
 
-    public function authenticate(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
-
-        if (auth('web')->attempt($credentials)){
-            $user = auth('web')->user();
-
-            $token = auth('gh_token')->login($user);
-            $expire = time() + env('JWT_TTL', 60) * 60;
-            $cookie = cookie(config('gh-auth.token_key'), $token, $expire);
-
-            return redirect(home_url())->withCookie($cookie);
-        }
- 
-        return back()->withErrors([
-            'error' => 'Thông tin đăng nhập không chính xác.',
-        ])->onlyInput('email');
-    }
-
     public function logout(Request $request)
-    {        
+    {
         auth('gh_token')->logout();
         auth('web')->logout();
 
@@ -57,7 +56,7 @@ class AuthController extends Controller
         if ($request->expectsJson()) {
             return response()->json(['message' => 'Successfully logged out'])->withCookie($cookie);
         }
-        
+
         return redirect(home_url())->withCookie($cookie);
     }
 
@@ -87,7 +86,7 @@ class AuthController extends Controller
         $model = config('gh-auth.user_model');
         $user = $model::where('active_token', $token)->first();
 
-        if (! $user || ! $user->canActivable()) {
+        if (!$user || !$user->canActivable()) {
             return view('gohost-auth::auth.not-found');
         }
 
@@ -95,7 +94,7 @@ class AuthController extends Controller
     }
 
     public function updatePassword(Request $request)
-    {        
+    {
         $token = $request->input('token');
         if (!$token) {
             return view('gohost-auth::auth.not-found');
@@ -104,7 +103,7 @@ class AuthController extends Controller
         $model = config('gh-auth.user_model');
         $user = $model::where('active_token', $token)->first();
 
-        if (! $user || ! $user->canActivable()) {
+        if (!$user || !$user->canActivable()) {
             return view('gohost-auth::auth.not-found');
         }
 
