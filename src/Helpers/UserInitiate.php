@@ -2,29 +2,33 @@
 
 namespace GohostAuth\Helpers;
 
+use Exception;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Support\Facades\Auth;
 
 class UserInitiate
 {
     public static function handle(Request $request)
     {
-        $parser = app('tymon.jwt.parser');
-        $parser->setRequest($request); 
-        $token = $parser->parseToken();
+        try {
+            $parser = app('tymon.jwt.parser');
+            $parser->setRequest($request);
+            $token = $parser->parseToken();
 
-        JWTAuth::setToken($token);
-        $userPayload = JWTAuth::getPayload();
+            JWTAuth::setToken($token);
+            $userPayload = JWTAuth::getPayload();
 
-        if($userPayload) {
-            return self::createUserIfNeed($userPayload->toArray());
+            if ($userPayload) {
+                return self::createUserIfNeed($userPayload->toArray());
+            }
+
+            return null;
+        } catch (Exception) {
+            return null;
         }
-
-        return null;
     }
 
-    private static function createUserIfNeed($payload) 
+    private static function createUserIfNeed($payload)
     {
         $model = config('gh-auth.user_model');
 
@@ -38,10 +42,10 @@ class UserInitiate
             }
         }
 
-        if (config('gh-auth.auto_create_account')) {            
+        if (config('gh-auth.auto_create_account')) {
             $user = $model::updateOrCreate([
                 $uniqueField => $payload[$uniqueField],
-            ],[
+            ], [
                 'gh_id' => $payload['gh_id'],
                 'email' => $payload['email'],
                 'is_active' => $payload['is_active'],
