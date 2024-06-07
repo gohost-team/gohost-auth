@@ -38,11 +38,7 @@
               placeholder="password"
               name="password"
               type="password" required>
-          </label>
-          <div class="flex items-center mb-4">
-            <input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-sky-500 bg-gray-10 border-gray-300 rounded focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-            <label for="default-checkbox" class="ms-2 text-sm font-sans text-gray-600 dark:text-gray-300">Ghi nhớ đăng nhập</label>
-          </div>
+          </label>          
           <div class="flex space-x-2 pt-2 cursor-pointer hover:cursor-pointer">
             <button type="submit" class="w-full px-22 inline-block rounded-full border-2 border-lp-red px-6 pb-[6px] pt-2 font-bold leading-normal text-white bg-lp-red transition duration-150 ease-in-out hover:bg-white hover:text-red-600 focus:bg-white focus:text-red-600">Đăng nhập</button>
               
