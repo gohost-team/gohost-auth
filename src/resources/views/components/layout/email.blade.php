@@ -21,7 +21,7 @@
 
     <mj-section padding-top="20px">
       <mj-column width="14%" vertical-align="middle">
-        <mj-image src="https://gohost.vn/images/logo.png" target="_blank" href="https://gohost.com" ></mj-image>
+        <mj-image src="https://gohost.vn/images/logo.png" target="_blank" href="https://gohost.vn" ></mj-image>
       </mj-column>
       <mj-column width="86%">        
       </mj-column>
