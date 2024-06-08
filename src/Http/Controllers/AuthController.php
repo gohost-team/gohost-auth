@@ -71,9 +71,12 @@ class AuthController extends Controller
         $user = $model::where('email', $email)->first();
         if ($user) {
             $user->sendResetPasswordEmail();
+            return redirect()->route('auth.token_sent');
+        } else {
+            return back()->withErrors([
+                'error' => __('auth.validation.email.not_found'),
+            ])->onlyInput('email');
         }
-
-        return redirect()->route('auth.token_sent');
     }
 
     public function newPassword(Request $request)
