@@ -2,6 +2,7 @@
 
 namespace GohostAuth\Http\Controllers;
 
+use GohostAuth\Enums\UserStatus;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -89,11 +90,13 @@ class AuthController extends Controller
         $model = config('gh-auth.user_model');
         $user = $model::where('active_token', $token)->first();
 
-        if (!$user || !$user->canActivable()) {
+        if (!$user) {
             return view('gohost-auth::auth.not-found');
         }
 
-        return view('gohost-auth::auth.new-password', ['token' => $token]);
+        $isActivatedUser = $user->status == UserStatus::Active;
+
+        return view('gohost-auth::auth.new-password', ['token' => $token, 'isActivatedUser' => $isActivatedUser]);
     }
 
     public function updatePassword(Request $request)
@@ -106,7 +109,7 @@ class AuthController extends Controller
         $model = config('gh-auth.user_model');
         $user = $model::where('active_token', $token)->first();
 
-        if (!$user || !$user->canActivable()) {
+        if (!$user) {
             return view('gohost-auth::auth.not-found');
         }
 

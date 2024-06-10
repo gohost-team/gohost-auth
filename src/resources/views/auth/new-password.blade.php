@@ -4,12 +4,21 @@
       <a href="{{env('APP_URL')}}" class="justify-center"  aria-label="Brand">
         <img src="/images/logo.png" class="h-14 mx-auto"/>
       </a>
-      <h2 class="flex items-center text-2xl leading-[115%] md:text-3xl md:leading-[115%] font-semibold text-neutral-900 justify-center">
-        Kích hoạt tài khoản
-      </h2>
-      <div class="max-w-md mx-auto space-y-6 text-center">
-        <span>Vui lòng đặt mật khẩu để kích hoạt tài khoản</span>
-      </div>
+      @if($isActivatedUser)
+        <h2 class="flex items-center text-2xl leading-[115%] md:text-3xl md:leading-[115%] font-semibold text-neutral-900 justify-center">
+          Đổi mật khẩu
+        </h2>
+        <div class="max-w-md mx-auto space-y-6 text-center">
+          <span>Vui lòng đặt mật khẩu mới cho tài khoản của bạn</span>
+        </div>
+      @else
+        <h2 class="flex items-center text-2xl leading-[115%] md:text-3xl md:leading-[115%] font-semibold text-neutral-900 justify-center">
+          Kích hoạt tài khoản
+        </h2>
+        <div class="max-w-md mx-auto space-y-6 text-center">
+          <span>Vui lòng đặt mật khẩu để kích hoạt tài khoản</span>
+        </div>
+      @endif
       
       <div>
         <form class="grid grid-cols-1 gap-4" method="post" action="{{route('auth.update_password', ['token' => $token])}}">
@@ -46,8 +55,12 @@
                 class="w-full px-22 inline-block rounded-full border-2 border-lp-red px-6 pb-[6px] pt-2 font-bold leading-normal text-white bg-lp-red transition duration-150 ease-in-out hover:bg-white hover:text-red-600 focus:bg-white focus:text-red-600"
                 wire:loading.attr="disabled"
                 wire:target="save"
-                data-te-ripple-init>          
-              Cập nhật mật khẩu
+                data-te-ripple-init>
+              @if($isActivatedUser)
+                Cập nhật mật khẩu
+              @else
+                Kích hoạt tài khoản
+              @endif
             </button>
           </div>
         </form>
