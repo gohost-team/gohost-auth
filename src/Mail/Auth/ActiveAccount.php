@@ -16,7 +16,7 @@ class ActiveAccount extends BaseMail
 
     public function __construct($user)
     {
-        $this->activeUrl = route('auth.new_password', ['token' => $user->active_token]);
+        $this->activeUrl = route('auth.active_account', ['token' => $user->active_token]);
         $this->user = $user;
     }
 }

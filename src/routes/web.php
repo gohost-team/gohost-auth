@@ -12,11 +12,14 @@ if (config('gh-auth.register_auth_router'))
 
         Route::match(['GET', 'POST'], '/logout', [AuthController::class, 'logout'])->name('logout');
 
+        Route::get('active-account', [AuthController::class, 'activeAccount'])->name('auth.active_account');
+        Route::post('active-account', [AuthController::class, 'doActiveAccount'])->name('auth.do_active_account');
+
         Route::get('reset-password', function() {
             return view("gohost-auth::auth.reset-password");
         })->name('auth.reset_password');
 
-        Route::post('reset-password', [AuthController::class, 'resetPassword'])->name('auth.do_reset');
+        Route::post('reset-password', [AuthController::class, 'doResetPassword'])->name('auth.do_reset_password');
         
         Route::get('reset-password/sent', function(){
             return view("gohost-auth::auth.token-sent");

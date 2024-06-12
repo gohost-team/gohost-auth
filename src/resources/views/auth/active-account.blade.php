@@ -5,14 +5,14 @@
         <img src="/images/logo.png" class="h-14 mx-auto"/>
       </a>
       <h2 class="flex items-center text-2xl leading-[115%] md:text-3xl md:leading-[115%] font-semibold text-neutral-900 justify-center">
-        Đổi mật khẩu
+        Kích hoạt tài khoản
       </h2>
       <div class="max-w-md mx-auto space-y-6 text-center">
-        <span>Vui lòng đặt mật khẩu mới cho tài khoản của bạn</span>
+        <span>Vui lòng đặt mật khẩu để kích hoạt tài khoản</span>
       </div>
 
       <div>
-        <form class="grid grid-cols-1 gap-4" method="post" action="{{route('auth.update_password', ['token' => $token])}}">
+        <form class="grid grid-cols-1 gap-4" method="post" action="{{route('auth.do_active_account', ['token' => $token])}}">
 
           @csrf
           @if ($errors->any())
@@ -47,7 +47,7 @@
                     wire:loading.attr="disabled"
                     wire:target="save"
                     data-te-ripple-init>
-              Cập nhật mật khẩu
+              Kích hoạt tài khoản
             </button>
           </div>
         </form>
