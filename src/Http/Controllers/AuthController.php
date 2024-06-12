@@ -61,7 +61,56 @@ class AuthController extends Controller
         return redirect(home_url())->withCookie($cookie);
     }
 
-    public function resetPassword(Request $request)
+    /*******************************************************************
+     *                       Active Account                            *
+     *******************************************************************/
+    public function activeAccount(Request $request)
+    {
+        $token = $request->input('token');
+        if (!$token) {
+            return view('gohost-auth::auth.not-found');
+        }
+
+        $model = config('gh-auth.user_model');
+        $user = $model::where('active_token', $token)->first();
+
+        if (!$user) {
+            return view('gohost-auth::auth.not-found');
+        }
+
+        return view('gohost-auth::auth.active-account', ['token' => $token]);
+    }
+
+    public function doActiveAccount(Request $request)
+    {
+        $token = $request->input('token');
+        if (!$token) {
+            return view('gohost-auth::auth.not-found');
+        }
+
+        $model = config('gh-auth.user_model');
+        $user = $model::where('active_token', $token)->first();
+
+        if (!$user) {
+            return view('gohost-auth::auth.not-found');
+        }
+
+        $request->validate([
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required|min:6|same:password',
+        ]);
+
+        $user->activeAccount($request->input('password'));
+
+        return redirect(login_url());
+    }
+
+
+    /*******************************************************************
+     *                       Reset password                            *
+     *******************************************************************/
+
+    public function doResetPassword(Request $request)
     {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
@@ -70,7 +119,7 @@ class AuthController extends Controller
 
         $model = config('gh-auth.user_model');
         $user = $model::where('email', $email)->first();
-        if ($user) {
+        if ($user && $user->status == UserStatus::Active) {
             $user->sendResetPasswordEmail();
             return redirect()->route('auth.token_sent');
         } else {
@@ -94,9 +143,7 @@ class AuthController extends Controller
             return view('gohost-auth::auth.not-found');
         }
 
-        $isActivatedUser = $user->status == UserStatus::Active;
-
-        return view('gohost-auth::auth.new-password', ['token' => $token, 'isActivatedUser' => $isActivatedUser]);
+        return view('gohost-auth::auth.new-password', ['token' => $token]);
     }
 
     public function updatePassword(Request $request)
@@ -118,7 +165,7 @@ class AuthController extends Controller
             'password_confirmation' => 'required|min:6|same:password',
         ]);
 
-        $user->activeAccount($request->input('password'));
+        $user->updatePassword($request->input('password'));
 
         return redirect(login_url());
     }

@@ -138,6 +138,13 @@ class User extends Authenticatable implements JWTSubject
         $this->save();
     }
 
+    public function updatePassword($password)
+    {
+        $this->password = bcrypt($password);
+        $this->setActiveToken(true);
+        $this->save();
+    }
+
     // =========================================================
     // Helper
     // =========================================================
