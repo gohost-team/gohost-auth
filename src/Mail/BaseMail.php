@@ -2,12 +2,14 @@
 
 namespace GohostAuth\Mail;
 
-use Asahasrabuddhe\LaravelMJML\Mail\Mailable;
 use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\View;
+use Spatie\Mjml\Mjml;
 
 class BaseMail extends Mailable
 {
@@ -27,8 +29,12 @@ class BaseMail extends Mailable
 
     public function content(): Content
     {
+        $mjml = View::make($this->_contentView)
+            ->with(get_object_vars($this))
+            ->render();
+
         return new Content(
-            view: $this->mjml($this->_contentView)->buildMjmlView()['html'],
+            htmlString: Mjml::new()->toHtml($mjml),
         );
     }
 }
