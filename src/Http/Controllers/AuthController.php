@@ -67,14 +67,14 @@ class AuthController extends Controller
     public function activeAccount(Request $request)
     {
         $token = $request->input('token');
-        if (!$token) {
+        if (! $token) {
             return view('gohost-auth::auth.not-found');
         }
 
         $model = config('gh-auth.user_model');
         $user = $model::where('active_token', $token)->first();
 
-        if (!$user) {
+        if (! $user) {
             return view('gohost-auth::auth.not-found');
         }
 
@@ -84,14 +84,14 @@ class AuthController extends Controller
     public function doActiveAccount(Request $request)
     {
         $token = $request->input('token');
-        if (!$token) {
+        if (! $token) {
             return view('gohost-auth::auth.not-found');
         }
 
         $model = config('gh-auth.user_model');
         $user = $model::where('active_token', $token)->first();
 
-        if (!$user) {
+        if (! $user) {
             return view('gohost-auth::auth.not-found');
         }
 
@@ -104,7 +104,6 @@ class AuthController extends Controller
 
         return redirect(login_url());
     }
-
 
     /*******************************************************************
      *                       Reset password                            *
@@ -121,6 +120,7 @@ class AuthController extends Controller
         $user = $model::where('email', $email)->first();
         if ($user && $user->status == UserStatus::Active) {
             $user->sendResetPasswordEmail();
+
             return redirect()->route('auth.token_sent');
         } else {
             return back()->withErrors([
@@ -132,14 +132,14 @@ class AuthController extends Controller
     public function newPassword(Request $request)
     {
         $token = $request->input('token');
-        if (!$token) {
+        if (! $token) {
             return view('gohost-auth::auth.not-found');
         }
 
         $model = config('gh-auth.user_model');
         $user = $model::where('active_token', $token)->first();
 
-        if (!$user) {
+        if (! $user) {
             return view('gohost-auth::auth.not-found');
         }
 
@@ -149,14 +149,14 @@ class AuthController extends Controller
     public function updatePassword(Request $request)
     {
         $token = $request->input('token');
-        if (!$token) {
+        if (! $token) {
             return view('gohost-auth::auth.not-found');
         }
 
         $model = config('gh-auth.user_model');
         $user = $model::where('active_token', $token)->first();
 
-        if (!$user) {
+        if (! $user) {
             return view('gohost-auth::auth.not-found');
         }
 

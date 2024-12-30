@@ -2,12 +2,9 @@
 
 namespace GohostAuth\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Route;
-use Livewire;
 use GohostAuth\Livewire\ResetPassword;
-use Illuminate\Support\Facades\Auth;
-use Tymon\JWTAuth\JWTGuard;
+use Illuminate\Support\ServiceProvider;
+use Livewire;
 
 class AuthServiceProvider extends ServiceProvider
 {
