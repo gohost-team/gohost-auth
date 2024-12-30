@@ -2,15 +2,14 @@
 
 namespace GohostAuth\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
-use GohostAuth\Enums\UserType;
 use GohostAuth\Enums\UserStatus;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Mail;
-
+use GohostAuth\Enums\UserType;
 use GohostAuth\Mail\Auth\ActiveAccount;
 use GohostAuth\Mail\Auth\ResetPassword;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 const ACTIVE_TOKEN_LIFETIME = 5 * 24 * 60 * 60; // 5 days
 
@@ -22,9 +21,8 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'type',
         'gh_id',
-        'is_active',        
-        'permissions',
-        'active_token'
+        'is_active',
+        'active_token',
     ];
 
     protected $hidden = [
@@ -33,7 +31,6 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     protected $casts = [
-        'permissions' => 'array',
         'type' => UserType::class,
     ];
 
@@ -48,12 +45,12 @@ class User extends Authenticatable implements JWTSubject
             if (! $record->password) {
                 $record->password = bcrypt(Str::random(10));
             }
-            
+
             if (! $record->type) {
                 $record->type = UserType::Customer;
             }
 
-            if (! $record->status) {                
+            if (! $record->status) {
                 $record->status = UserStatus::Pending;
             }
         });
@@ -74,7 +71,7 @@ class User extends Authenticatable implements JWTSubject
             $query->whereIn('type', $type);
         } else {
             $query->where('type', $type);
-        }        
+        }
     }
 
     // =========================================================
@@ -83,8 +80,8 @@ class User extends Authenticatable implements JWTSubject
 
     public function sendInvitation()
     {
-        if ($this->type == UserType::GoHost 
-            && !config('gh-auth.auto_create_account') ) {
+        if ($this->type == UserType::GoHost
+            && ! config('gh-auth.auto_create_account')) {
             Mail::to($this->email)->queue(new ActiveAccount($this));
         }
     }
@@ -123,7 +120,7 @@ class User extends Authenticatable implements JWTSubject
 
         if ($canActivable) {
             $this->setActiveToken();
-        }        
+        }
 
         return $canActivable;
     }
@@ -167,12 +164,11 @@ class User extends Authenticatable implements JWTSubject
     public function isCustomer(): bool
     {
         return $this->type == UserType::Customer;
-    }    
-
+    }
 
     public function getAuthIdentifierName()
     {
-        return "gh_id";
+        return 'gh_id';
     }
 
     // =========================================================
@@ -187,6 +183,7 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         $model = config('gh-auth.user_model');
+
         return [
             // 'sub' => $this->gh_id,
             'name' => $this->name,
@@ -194,7 +191,6 @@ class User extends Authenticatable implements JWTSubject
             'type' => $this->type,
             'gh_id' => $this->gh_id,
             'is_active' => $this->is_active,
-            'permissions' => $model::buildPermissions()
         ];
     }
 }

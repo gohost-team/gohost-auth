@@ -55,7 +55,6 @@ Schema::create('users', function (Blueprint $table) {
     $table->string('gh_id')->unique();
     $table->boolean('is_active')->default(false);
     $table->string('type');
-    $table->json('permissions')->nullable();    
 
     $table->string('status', 10)->index();
     $table->string('active_token', 64)->nullable()->index();
@@ -79,29 +78,20 @@ Schema::create('users', function (Blueprint $table) {
 
 ### Update User model
 
-Add buildPermissions method
-
 ```
 use GohostAuth\Models\User as BaseUser;
-use GohostAuth\Models\Contracts\HasPermissions;
 
-class User extends BaseUser implements HasPermissions {
+class User extends BaseUser {
 
     protected $fillable = [
         'name',
         'email',
         'password',
         'type',
-        'is_active',        
-        'permissions'
+        'is_active',
     ];
 
-    ....
-
-    static public function buildPermissions()
-    {
-        return [];
-    }
+    ...
 }
 ```
 

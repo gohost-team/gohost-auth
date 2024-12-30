@@ -33,11 +33,11 @@ class UserInitiate
         $model = config('gh-auth.user_model');
 
         $user = null;
-        $uniqueField = "gh_id";
-        if (array_key_exists("gh_id", $payload)) {
+        $uniqueField = 'gh_id';
+        if (array_key_exists('gh_id', $payload)) {
             $user = $model::where('gh_id', $payload['gh_id'])->first();
-            if (!$user) {
-                $uniqueField = "email";
+            if (! $user) {
+                $uniqueField = 'email';
                 $user = $model::where('email', $payload['email'])->first();
             }
         }
@@ -51,7 +51,6 @@ class UserInitiate
                 'is_active' => $payload['is_active'],
                 'name' => $payload['name'],
                 'type' => $payload['type'],
-                'permissions' => $payload['permissions'],
             ]);
         }
 
