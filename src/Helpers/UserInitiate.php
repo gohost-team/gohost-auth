@@ -3,6 +3,7 @@
 namespace GohostAuth\Helpers;
 
 use Exception;
+use GohostAuth\Enums\UserType;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -42,7 +43,12 @@ class UserInitiate
             }
         }
 
-        if (config('gh-auth.auto_create_account')) {
+        $userType = UserType::tryFrom($payload['type']);
+
+        if (
+            config('gh-auth.auto_create_account')
+            || ($userType !== null && in_array($userType, [UserType::GoHost, UserType::Admin]))
+        ) {
             $user = $model::updateOrCreate([
                 $uniqueField => $payload[$uniqueField],
             ], [
